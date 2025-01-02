@@ -3,6 +3,8 @@
 public class Main {
     public static void main(String[] args) {
         Playing_Game game = new Playing_Game();
+        game.startGame();
+        
 
 
 
