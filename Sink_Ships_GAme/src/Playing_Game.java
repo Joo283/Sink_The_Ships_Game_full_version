@@ -1,33 +1,48 @@
-//this Class is responsible for the logic of the game
-//It takes the size of the grid as input from the Main Class and sets the size of the grid
-//the main logic of the game that its check the String that is returned from the PutDots class and prints the result of the check
-//It also prints the number of guesses made by the user after the game is over
 import java.util.Scanner;
-
 public class Playing_Game {
-    Scanner sc = new Scanner(System.in);
-    private int sizeOfGrid = 0;
-
+    private final Scanner sc = new Scanner(System.in);
+    private int sizeOfGrid;
+    private int shipsKilled = 3;
     public void setSizeOfGrid(int sizeOfGrid) {
+        if (sizeOfGrid <= 0) {
+            throw new IllegalArgumentException("Grid size must be greater than zero.");
+        }
         this.sizeOfGrid = sizeOfGrid;
-
-
     }
-
     public void startGame() {
-        PutDots put = new PutDots(sizeOfGrid);
+        PutDots putDots = new PutDots(sizeOfGrid);
+        for (int i = 0; i < 3; i++) {
+            putDots.setDots(i);
+        }
+//        System.out.println("Game started! Here's the initial grid:");
+//        putDots.printGrid();
         while (true) {
-            System.out.println("enter a number : ");
-            int num = sc.nextInt();
-            String check = put.checkYourself(num);
-            if ( check.equals("hit")) {
-                System.out.println("hit");
-            } else if (check.equals("lost") ) {
-                System.out.println("miss");
-            } else if (check.equals("kill")) {
-                System.out.println("Kill");
-                System.out.println("you took " + put.getNumOfGuesses() + " guesses");
-                break;
+            try {
+                if (shipsKilled == 0) {
+                    System.out.println("You sunk all the ships in " + putDots.getNumOfGuesses() + " guesses!");
+                    break;
+                }
+                System.out.print("Enter your guess (X Y): ");
+                int guessX = sc.nextInt();
+                int guessY = sc.nextInt();
+                putDots.setUserGuessX(guessX);
+                putDots.setUserGuessY(guessY);
+                String result = putDots.checkYourself();
+
+                if (result.startsWith("hit")) {
+                    System.out.println(result);
+                } else if (result.startsWith("miss")) {
+                    System.out.println("Missed! Try again.");
+                } else if (result.startsWith("kill")) {
+                    shipsKilled--;
+                    System.out.println(result);
+                }else {
+                    System.out.println("Invalid input! Please enter valid coordinates.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Invalid input! Please enter numeric coordinates.");
+                sc.nextLine();
             }
         }
     }
